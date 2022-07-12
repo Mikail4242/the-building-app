@@ -1,0 +1,26 @@
+[
+	{
+		"id": 1,
+		"name": "Windosr",
+		"area": "200",
+		"location": "London"
+	},
+	{
+		"id": 2,
+		"name": "Astoria",
+		"area": "300",
+		"location": "Paris"
+	},
+	{
+		"id": 3,
+		"name": "Blue Lagoon",
+		"area": "150",
+		"location": "Amsterdam"
+	},
+	{
+		"id": 4,
+		"name": "Sofia Estate",
+		"area": "400",
+		"location": "Sofia"
+	}
+]
