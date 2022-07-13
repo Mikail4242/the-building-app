@@ -1,7 +1,12 @@
-import { Fragment, useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { BuildingContext } from "../Context/BuildingContext";
 import UpdateForm from "./UpdateForm";
+import house from "../../src/Images/house1.jpg";
+import house1 from "../../src/Images/house2.jpg";
+import house2 from "../../src/Images/house3.jpg";
+import house3 from "../../src/Images/house4.jpg";
+
 
 const Building = ({ data }) => {
 	const { deleteUser } = useContext(BuildingContext);
@@ -16,11 +21,14 @@ const Building = ({ data }) => {
 	}, [data]);
 
 	return (
-		<Fragment>
+		<>
 			<td>{data.id}</td>
 			<td>{data.name}</td>
 			<td>{data.area}</td>
 			<td>{data.location}</td>
+			<td>
+				<img src={data.icon} width="50px" height="50px" alt={""} />
+			</td>
 			<td>
 				<button
 					onClick={handleShow}
@@ -52,7 +60,7 @@ const Building = ({ data }) => {
 					</Button>
 				</Modal.Footer>
 			</Modal>
-		</Fragment>
+		</>
 	);
 };
 

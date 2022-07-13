@@ -45,15 +45,19 @@ const BuildingList = () => {
 						<th>Name</th>
 						<th>Area</th>
 						<th>Location</th>
+						<th>Images</th>
 						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
-					{dataList.map((data) => (
-						<tr key={data.id}>
-							<Building data={data} />
-						</tr>
-					))}
+					{dataList &&
+						dataList.map((data) => {
+							return (
+								<tr key={data.id}>
+									<Building data={data} />
+								</tr>
+							);
+						})}
 				</tbody>
 			</Table>
 			<Modal show={show} onHide={handleClose}>

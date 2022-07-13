@@ -1,0 +1,446 @@
+[1mdiff --git a/public/mock.json b/public/mock.json[m
+[1mindex b811bbc..c7f0cd9 100644[m
+[1m--- a/public/mock.json[m
+[1m+++ b/public/mock.json[m
+[36m@@ -3,24 +3,28 @@[m
+ 		"id": 1,[m
+ 		"name": "Windosr",[m
+ 		"area": "200",[m
+[31m-		"location": "London"[m
+[32m+[m		[32m"location": "London",[m
+[32m+[m		[32m"icon": "http://localhost:3000/static/media/house2.e0debd0f01d4b40ffe9e.jpg"[m
+ 	},[m
+ 	{[m
+ 		"id": 2,[m
+ 		"name": "Astoria",[m
+ 		"area": "300",[m
+[31m-		"location": "Paris"[m
+[32m+[m		[32m"location": "Paris",[m
+[32m+[m		[32m"icon": "http://localhost:3000/static/media/house1.7de2f7076bb35170ca15.jpg"[m
+ 	},[m
+ 	{[m
+ 		"id": 3,[m
+ 		"name": "Blue Lagoon",[m
+ 		"area": "150",[m
+[31m-		"location": "Amsterdam"[m
+[32m+[m		[32m"location": "Amsterdam",[m
+[32m+[m		[32m"icon": "http://localhost:3000/static/media/house3.91c1fa22afe92f3f5cce.jpg"[m
+ 	},[m
+ 	{[m
+ 		"id": 4,[m
+ 		"name": "Sofia Estate",[m
+ 		"area": "400",[m
+[31m-		"location": "Sofia"[m
+[32m+[m		[32m"location": "Sofia",[m
+[32m+[m		[32m"icon": "http://localhost:3000/static/media/house4.0c9edf51e14f73c1768a.jpg"[m
+ 	}[m
+[31m-][m
+\ No newline at end of file[m
+[32m+[m[32m][m
+[1mdiff --git a/src/Components/AddForm.js b/src/Components/AddForm.js[m
+[1mindex feeb348..02deaa0 100644[m
+[1m--- a/src/Components/AddForm.js[m
+[1m+++ b/src/Components/AddForm.js[m
+[36m@@ -1,27 +1,35 @@[m
+[31m-import { Button, Form } from "react-bootstrap";[m
+[32m+[m[32mimport { Button, Form, Alert } from "react-bootstrap";[m
+ import { BuildingContext } from "../Context/BuildingContext";[m
+[31m-import { useContext, useState } from "react";[m
+[32m+[m[32mimport { useContext, useState, useEffect } from "react";[m
+ [m
+[31m-const AddForm = () =>{[m
+[32m+[m[32mconst AddForm = () => {[m
+[32m+[m	[32mconst { addUserHandler, dataList } = useContext(BuildingContext);[m
+ [m
+[31m-    const {addUserHandler} = useContext(BuildingContext);[m
+[32m+[m	[32mconst [newUser, setNewUser] = useState({[m
+[32m+[m		[32mid: "",[m
+[32m+[m		[32mname: "",[m
+[32m+[m		[32marea: "",[m
+[32m+[m		[32mlocation: "",[m
+[32m+[m		[32micon: "",[m
+[32m+[m	[32m});[m
+ [m
+[31m-    const [newUser, setNewUser] = useState({[m
+[31m-        id:"", name:"", area:"", location:""[m
+[31m-    });[m
+[32m+[m	[32mfunction handleChange(e) {[m
+[32m+[m		[32mconsole.log(e.target.files);[m
+[32m+[m		[32msetNewUser((prev) => {[m
+[32m+[m			[32mreturn { ...prev, icon: URL.createObjectURL(e.target.files[0]) };[m
+[32m+[m		[32m});[m
+[32m+[m	[32m}[m
+ [m
+[31m-    const onInputChange = (e) => {[m
+[31m-        setNewUser({...newUser,[e.target.name]: e.target.value})[m
+[31m-    }[m
+[32m+[m	[32mconst onInputChange = (e, field) => {[m
+[32m+[m		[32msetNewUser({ ...newUser, [e.target.name]: e.target.value });[m
+[32m+[m	[32m};[m
+ [m
+[31m-    const {id, name, area, location} = newUser;[m
+[32m+[m	[32mconst { id, name, area, location, icon } = newUser;[m
+ [m
+[31m-    const handleSubmit = (e) => {[m
+[31m-        e.preventDefault();[m
+[31m-        if ([m
+[31m-			name.trim().length < 3 ||[m
+[31m-			location.trim().length < 3[m
+[31m-		) {[m
+[32m+[m	[32mconst handleSubmit = (e) => {[m
+[32m+[m		[32me.preventDefault();[m
+[32m+[m
+[32m+[m		[32mif (name.trim().length < 3) {[m
+ 			return;[m
+ 		}[m
+ 		if (+id < 1) {[m
+[36m@@ -30,58 +38,88 @@[m [mconst AddForm = () =>{[m
+ 		if (+area < 1) {[m
+ 			return;[m
+ 		}[m
+[31m-        addUserHandler(id, name, area, location);[m
+[31m-    }[m
+[32m+[m		[32mconst duplicated = dataList.find((val) => val.id === +id);[m
+[32m+[m		[32mif (duplicated) {[m
+[32m+[m			[32mreturn;[m
+[32m+[m		[32m}[m
+[32m+[m		[32maddUserHandler(id, name, area, location, icon);[m
+[32m+[m	[32m};[m
+[32m+[m[41m	[m
+[32m+[m	[32mconst [show, setShow] = useState(false);[m
+[32m+[m	[32mconst handleShowAlert = () => setShow(true);[m
+ [m
+[31m-     return ([m
+[32m+[m	[32museEffect(() => {[m
+[32m+[m		[32mreturn () => handleShowAlert();[m
+[32m+[m	[32m}, []);[m
+ [m
+[31m-        <Form onSubmit={handleSubmit}>[m
+[31m-            <Form.Group>[m
+[31m-                <Form.Control[m
+[31m-                    type="number"[m
+[31m-                    placeholder="id *"[m
+[31m-                    name="id"[m
+[31m-                    value={id}[m
+[31m-                    onChange = { (e) => onInputChange(e)}[m
+[32m+[m	[32mreturn ([m
+[32m+[m		[32m<Form onSubmit={handleSubmit}>[m
+[32m+[m			[32m<Form.Group>[m
+[32m+[m				[32m<Form.Control[m
+[32m+[m					[32mtype="number"[m
+[32m+[m					[32mplaceholder="id *"[m
+[32m+[m					[32mname="id"[m
+[32m+[m					[32mvalue={id}[m
+[32m+[m					[32monChange={(e) => onInputChange(e)}[m
+ 					required[m
+[31m-                />[m
+[31m-            </Form.Group>[m
+[31m-            <Form.Group>[m
+[31m-                <Form.Control[m
+[31m-                    type="text"[m
+[31m-                    placeholder="name *"[m
+[31m-                    name="name"[m
+[31m-                    value={name}[m
+[31m-                    onChange = { (e) => onInputChange(e)}[m
+[31m-                    required[m
+[31m-                />[m
+[31m-            </Form.Group>[m
+[31m-            <Form.Group>[m
+[31m-                <Form.Control[m
+[31m-                    type="number"[m
+[31m-                    placeholder="area"[m
+[31m-                    rows={3}[m
+[31m-                    name="area"[m
+[31m-                    value={area}[m
+[31m-                    onChange = { (e) => onInputChange(e)}[m
+[32m+[m				[32m/>[m
+[32m+[m				[32m<Alert[m
+[32m+[m					[32mvariant="danger"[m
+[32m+[m					[32monClose={() => setShow(false)}[m
+[32m+[m					[32mdismissible[m
+[32m+[m					[32mshow={show}>[m
+[32m+[m					[32mCheck your id you cannot add the same id[m
+[32m+[m				[32m</Alert>[m
+[32m+[m			[32m</Form.Group>[m
+[32m+[m			[32m<Form.Group>[m
+[32m+[m				[32m<Form.Control[m
+[32m+[m					[32mtype="text"[m
+[32m+[m					[32mplaceholder="name *"[m
+[32m+[m					[32mname="name"[m
+[32m+[m					[32mvalue={name}[m
+[32m+[m					[32monChange={(e) => onInputChange(e)}[m
+ 					required[m
+[31m-                />[m
+[31m-            </Form.Group>[m
+[31m-            <Form.Group>[m
+[31m-                <Form.Control[m
+[31m-                    type="text"[m
+[31m-                    placeholder="location"[m
+[31m-                    name="location"[m
+[31m-                    value={location}[m
+[31m-                    onChange = { (e) => onInputChange(e)}[m
+[31m-                />[m
+[31m-            </Form.Group>[m
+[31m-            <Button variant="success" type="submit">[m
+[31m-                Add User[m
+[31m-            </Button>[m
+[31m-        </Form>[m
+[31m-[m
+[31m-     )[m
+[31m-}[m
+[32m+[m				[32m/>[m
+[32m+[m				[32m<Alert[m
+[32m+[m					[32mvariant="danger"[m
+[32m+[m					[32monClose={() => setShow(false)}[m
+[32m+[m					[32mdismissible[m
+[32m+[m					[32mshow={show}>[m
+[32m+[m					[32myour name should be more than 3 chars[m
+[32m+[m				[32m</Alert>[m
+[32m+[m			[32m</Form.Group>[m
+[32m+[m			[32m<Form.Group>[m
+[32m+[m				[32m<Form.Control[m
+[32m+[m					[32mtype="number"[m
+[32m+[m					[32mplaceholder="area"[m
+[32m+[m					[32mrows={3}[m
+[32m+[m					[32mname="area"[m
+[32m+[m					[32mvalue={area}[m
+[32m+[m					[32monChange={(e) => onInputChange(e)}[m
+[32m+[m					[32mrequired[m
+[32m+[m				[32m/>[m
+[32m+[m			[32m</Form.Group>[m
+[32m+[m			[32m<Form.Group>[m
+[32m+[m				[32m<Form.Control[m
+[32m+[m					[32mtype="text"[m
+[32m+[m					[32mplaceholder="location"[m
+[32m+[m					[32mname="location"[m
+[32m+[m					[32mvalue={location}[m
+[32m+[m					[32monChange={(e) => onInputChange(e)}[m
+[32m+[m				[32m/>[m
+[32m+[m			[32m</Form.Group>[m
+[32m+[m			[32m<Form.Group>[m
+[32m+[m				[32m<div className="App">[m
+[32m+[m					[32m<h4>Add Image:</h4>[m
+[32m+[m					[32m<input type="file" name="icon" onChange={(e) => handleChange(e)} />[m
+[32m+[m				[32m</div>[m
+[32m+[m			[32m</Form.Group>[m
+[32m+[m			[32m<Button onClick={() => setShow(true)} variant="success" type="submit">[m
+[32m+[m				[32mAdd User[m
+[32m+[m			[32m</Button>[m
+[32m+[m[41m			[m
+[32m+[m		[32m</Form>[m
+[32m+[m	[32m);[m
+[32m+[m[32m};[m
+ [m
+ export default AddForm;[m
+[1mdiff --git a/src/Components/Building.js b/src/Components/Building.js[m
+[1mindex d544857..4eb2180 100644[m
+[1m--- a/src/Components/Building.js[m
+[1m+++ b/src/Components/Building.js[m
+[36m@@ -1,7 +1,12 @@[m
+[31m-import { Fragment, useContext, useState, useEffect } from "react";[m
+[32m+[m[32mimport { useContext, useState, useEffect } from "react";[m
+ import { Modal, Button } from "react-bootstrap";[m
+ import { BuildingContext } from "../Context/BuildingContext";[m
+ import UpdateForm from "./UpdateForm";[m
+[32m+[m[32mimport house from "../../src/Images/house1.jpg";[m
+[32m+[m[32mimport house1 from "../../src/Images/house2.jpg";[m
+[32m+[m[32mimport house2 from "../../src/Images/house3.jpg";[m
+[32m+[m[32mimport house3 from "../../src/Images/house4.jpg";[m
+[32m+[m
+ [m
+ const Building = ({ data }) => {[m
+ 	const { deleteUser } = useContext(BuildingContext);[m
+[36m@@ -16,11 +21,14 @@[m [mconst Building = ({ data }) => {[m
+ 	}, [data]);[m
+ [m
+ 	return ([m
+[31m-		<Fragment>[m
+[32m+[m		[32m<>[m
+ 			<td>{data.id}</td>[m
+ 			<td>{data.name}</td>[m
+ 			<td>{data.area}</td>[m
+ 			<td>{data.location}</td>[m
+[32m+[m			[32m<td>[m
+[32m+[m				[32m<img src={data.icon} width="50px" height="50px" alt={""} />[m
+[32m+[m			[32m</td>[m
+ 			<td>[m
+ 				<button[m
+ 					onClick={handleShow}[m
+[36m@@ -52,7 +60,7 @@[m [mconst Building = ({ data }) => {[m
+ 					</Button>[m
+ 				</Modal.Footer>[m
+ 			</Modal>[m
+[31m-		</Fragment>[m
+[32m+[m		[32m</>[m
+ 	);[m
+ };[m
+ [m
+[1mdiff --git a/src/Components/BuildingList.js b/src/Components/BuildingList.js[m
+[1mindex cbb9574..95332a8 100644[m
+[1m--- a/src/Components/BuildingList.js[m
+[1m+++ b/src/Components/BuildingList.js[m
+[36m@@ -45,15 +45,19 @@[m [mconst BuildingList = () => {[m
+ 						<th>Name</th>[m
+ 						<th>Area</th>[m
+ 						<th>Location</th>[m
+[32m+[m						[32m<th>Images</th>[m
+ 						<th>Actions</th>[m
+ 					</tr>[m
+ 				</thead>[m
+ 				<tbody>[m
+[31m-					{dataList.map((data) => ([m
+[31m-						<tr key={data.id}>[m
+[31m-							<Building data={data} />[m
+[31m-						</tr>[m
+[31m-					))}[m
+[32m+[m					[32m{dataList &&[m
+[32m+[m						[32mdataList.map((data) => {[m
+[32m+[m							[32mreturn ([m
+[32m+[m								[32m<tr key={data.id}>[m
+[32m+[m									[32m<Building data={data} />[m
+[32m+[m								[32m</tr>[m
+[32m+[m							[32m);[m
+[32m+[m						[32m})}[m
+ 				</tbody>[m
+ 			</Table>[m
+ 			<Modal show={show} onHide={handleClose}>[m
+[1mdiff --git a/src/Components/UpdateForm.js b/src/Components/UpdateForm.js[m
+[1mindex 302bb7b..acfeda8 100644[m
+[1m--- a/src/Components/UpdateForm.js[m
+[1m+++ b/src/Components/UpdateForm.js[m
+[36m@@ -1,36 +1,45 @@[m
+[31m-import { Button, Form } from "react-bootstrap";[m
+[32m+[m[32mimport { Button, Form, Alert } from "react-bootstrap";[m
+ [m
+ import { BuildingContext } from "../Context/BuildingContext";[m
+[31m-import { useContext, useState } from "react";[m
+[32m+[m[32mimport { useContext, useState, useEffect } from "react";[m
+ [m
+ const UpdateForm = ({ theUpdate }) => {[m
+[32m+[m	[32mconst { updateUser, dataList } = useContext(BuildingContext);[m
+[32m+[m
+ 	const userId = theUpdate.id;[m
+ [m
+ 	const [id, setId] = useState(theUpdate.id);[m
+ 	const [name, setName] = useState(theUpdate.name);[m
+ 	const [area, setArea] = useState(theUpdate.area);[m
+ 	const [location, setLocation] = useState(theUpdate.location);[m
+[32m+[m	[32mconst [icon, setIcon] = useState(theUpdate.icon);[m
+ [m
+[31m-	const { updateUser } = useContext(BuildingContext);[m
+[31m-[m
+[31m-	const updatedUser = { id, name, area, location };[m
+[32m+[m	[32mfunction handleChange(e) {[m
+[32m+[m		[32mconsole.log(e.target.files);[m
+[32m+[m		[32msetIcon(URL.createObjectURL(e.target.files[0]));[m
+[32m+[m	[32m}[m
+ [m
+[32m+[m	[32mconst updatedUser = { id, name, area, location, icon };[m
+ 	const userHandleSubmit = (e) => {[m
+ 		e.preventDefault();[m
+[31m-		if ([m
+[31m-			name.trim().length < 3 ||[m
+[31m-			location.trim().length < 3[m
+[31m-		) {[m
+[32m+[m		[32mif (name.trim().length < 3) {[m
+ 			return;[m
+ 		}[m
+ 		if (+id < 1) {[m
+ 			return;[m
+ 		}[m
+[31m-		if (+area < 1) {[m
+[32m+[m		[32mconst result = dataList.find((val) => val.id === +id);[m
+[32m+[m		[32mif (result) {[m
+ 			return;[m
+ 		}[m
+ 		updateUser(userId, updatedUser);[m
+ 	};[m
+[32m+[m	[32mconst [show, setShow] = useState(false);[m
+[32m+[m	[32mconst handleShowAlert = () => setShow(true);[m
+[32m+[m
+[32m+[m	[32museEffect(() => {[m
+[32m+[m		[32mreturn () => handleShowAlert();[m
+[32m+[m	[32m}, []);[m
+ [m
+ 	return ([m
+ 		<Form onSubmit={userHandleSubmit}>[m
+[36m@@ -43,6 +52,13 @@[m [mconst UpdateForm = ({ theUpdate }) => {[m
+ 					value={id}[m
+ 					onChange={(e) => setId(e.target.value)}[m
+ 				/>[m
+[32m+[m				[32m<Alert[m
+[32m+[m					[32mvariant="danger"[m
+[32m+[m					[32monClose={() => setShow(false)}[m
+[32m+[m					[32mdismissible[m
+[32m+[m					[32mshow={show}>[m
+[32m+[m					[32mCheck your id you cannot add the same id[m
+[32m+[m				[32m</Alert>[m
+ 			</Form.Group>[m
+ 			<Form.Group>[m
+ 				<Form.Control[m
+[36m@@ -53,6 +69,13 @@[m [mconst UpdateForm = ({ theUpdate }) => {[m
+ 					value={name}[m
+ 					onChange={(e) => setName(e.target.value)}[m
+ 				/>[m
+[32m+[m				[32m<Alert[m
+[32m+[m					[32mvariant="danger"[m
+[32m+[m					[32monClose={() => setShow(false)}[m
+[32m+[m					[32mdismissible[m
+[32m+[m					[32mshow={show}>[m
+[32m+[m					[32myour name should be more than 3 chars[m
+[32m+[m				[32m</Alert>[m
+ 			</Form.Group>[m
+ 			<Form.Group>[m
+ 				<Form.Control[m
+[36m@@ -74,7 +97,15 @@[m [mconst UpdateForm = ({ theUpdate }) => {[m
+ 					onChange={(e) => setLocation(e.target.value)}[m
+ 				/>[m
+ 			</Form.Group>[m
+[31m-			<Button variant="success" type="submit">[m
+[32m+[m			[32m<Form.Group>[m
+[32m+[m				[32m<Form.Control[m
+[32m+[m					[32mtype="file"[m
+[32m+[m					[32mplaceholder="location"[m
+[32m+[m					[32mname="icon"[m
+[32m+[m					[32monChange={(e) => handleChange(e)}[m
+[32m+[m				[32m/>[m
+[32m+[m			[32m</Form.Group>[m
+[32m+[m			[32m<Button onClick={() => setShow(true)} variant="success" type="submit">[m
+ 				Update User[m
+ 			</Button>[m
+ 		</Form>[m
+[1mdiff --git a/src/Context/BuildingContext.js b/src/Context/BuildingContext.js[m
+[1mindex 6b3f8d6..9aaf758 100644[m
+[1m--- a/src/Context/BuildingContext.js[m
+[1m+++ b/src/Context/BuildingContext.js[m
+[36m@@ -25,8 +25,8 @@[m [mconst BuildingContextProvider = (props) => {[m
+ 		getData();[m
+ 	}, []);[m
+ [m
+[31m-	const addUserHandler = (id, name, area, location) => {[m
+[31m-		setDataList([...dataList, { id, name, area, location }]);[m
+[32m+[m	[32mconst addUserHandler = (id, name, area, location, icon) => {[m
+[32m+[m		[32msetDataList([...dataList, { id, name, area, location, icon }]);[m
+ 	};[m
+ [m
+ 	const deleteUser = (id) => {[m
+[36m@@ -34,11 +34,17 @@[m [mconst BuildingContextProvider = (props) => {[m
+ 	};[m
+ [m
+ 	const updateUser = (id, updatedUser) => {[m
+[31m-		setDataList(dataList.map(data => data.id === id ? updatedUser : data))[m
+[32m+[m		[32msetDataList(dataList.map((data) => (data.id === id ? updatedUser : data)));[m
+ 	};[m
+ [m
+ 	return ([m
+[31m-		<BuildingContext.Provider value={{ dataList, addUserHandler, deleteUser, updateUser }}>[m
+[32m+[m		[32m<BuildingContext.Provider[m
+[32m+[m			[32mvalue={{[m
+[32m+[m				[32mdataList,[m
+[32m+[m				[32maddUserHandler,[m
+[32m+[m				[32mdeleteUser,[m
+[32m+[m				[32mupdateUser,[m
+[32m+[m			[32m}}>[m
+ 			{props.children}[m
+ 		</BuildingContext.Provider>[m
+ 	);[m

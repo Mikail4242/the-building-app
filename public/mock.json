@@ -3,24 +3,28 @@
 		"id": 1,
 		"name": "Windosr",
 		"area": "200",
-		"location": "London"
+		"location": "London",
+		"icon": "http://localhost:3000/static/media/house2.e0debd0f01d4b40ffe9e.jpg"
 	},
 	{
 		"id": 2,
 		"name": "Astoria",
 		"area": "300",
-		"location": "Paris"
+		"location": "Paris",
+		"icon": "http://localhost:3000/static/media/house1.7de2f7076bb35170ca15.jpg"
 	},
 	{
 		"id": 3,
 		"name": "Blue Lagoon",
 		"area": "150",
-		"location": "Amsterdam"
+		"location": "Amsterdam",
+		"icon": "http://localhost:3000/static/media/house3.91c1fa22afe92f3f5cce.jpg"
 	},
 	{
 		"id": 4,
 		"name": "Sofia Estate",
 		"area": "400",
-		"location": "Sofia"
+		"location": "Sofia",
+		"icon": "http://localhost:3000/static/media/house4.0c9edf51e14f73c1768a.jpg"
 	}
 ]

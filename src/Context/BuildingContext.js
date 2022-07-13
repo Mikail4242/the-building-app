@@ -25,8 +25,8 @@ const BuildingContextProvider = (props) => {
 		getData();
 	}, []);
 
-	const addUserHandler = (id, name, area, location) => {
-		setDataList([...dataList, { id, name, area, location }]);
+	const addUserHandler = (id, name, area, location, icon) => {
+		setDataList([...dataList, { id, name, area, location, icon }]);
 	};
 
 	const deleteUser = (id) => {
@@ -34,11 +34,17 @@ const BuildingContextProvider = (props) => {
 	};
 
 	const updateUser = (id, updatedUser) => {
-		setDataList(dataList.map(data => data.id === id ? updatedUser : data))
+		setDataList(dataList.map((data) => (data.id === id ? updatedUser : data)));
 	};
 
 	return (
-		<BuildingContext.Provider value={{ dataList, addUserHandler, deleteUser, updateUser }}>
+		<BuildingContext.Provider
+			value={{
+				dataList,
+				addUserHandler,
+				deleteUser,
+				updateUser,
+			}}>
 			{props.children}
 		</BuildingContext.Provider>
 	);
